@@ -12,6 +12,7 @@ import 'template.dart';
 const String CLASS_NAME_TEMPLATE_KEY = "#CLASS_NAME#";
 const String VALUES_AREA_TEMPLATE_KEY = "/// Values area";
 const String FIELDS_AREA_TEMPLATE_KEY = "/// Fields area";
+const String GROUPED_KEYS_AREA_TEMPLATE_KEY = "/// Grouped keys area";
 const String SUPPORTED_LANGUAGES_AREA_TEMPLATE_KEY =
     "/// SupportedLanguages area";
 const String PARAMETERS_REGEX = r"(\%[[0-9a-zA-Z]+]*\$(d|s))";
@@ -62,6 +63,7 @@ class FlappyTranslator {
     bool dependOnContext,
     bool useSingleQuotes,
     bool replaceNoBreakSpaces,
+    Iterable<String> groupedKey,
   }) async {
     final File file = File(inputFilePath);
     if (!file.existsSync()) {
@@ -78,6 +80,7 @@ class FlappyTranslator {
     dependOnContext ??= DefaultSettings.dependOnContext;
     useSingleQuotes ??= DefaultSettings.useSingleQuotes;
     replaceNoBreakSpaces ??= DefaultSettings.replaceNoBreakSpaces;
+    groupedKey ??= DefaultSettings.groupedKeys;
 
     // construct the template
     String template = templateBegining +
@@ -93,6 +96,9 @@ class FlappyTranslator {
         csvParser.getSupportedLanguages(lines, startIndex: startIndex);
     final List<Map<String, String>> maps =
         _generateValuesMaps(supportedLanguages);
+    final Map<String, Set<String>> groupedKeysValues =
+        _generateGroupedKeysMap(groupedKey);
+
     template = _replaceSupportedLanguages(template, supportedLanguages);
 
     final String quoteString = useSingleQuotes ? '\'' : '"';
@@ -122,6 +128,12 @@ class FlappyTranslator {
             "$key is a reserved keyword in Dart and cannot be used as key (line ${linesIndex + 1})\nAll reserved words in Dart are : $RESERVED_WORDS");
         return;
       }
+
+      List<String> groupedKeysForKey = _getGroupedKeysForKey(groupedKey, key);
+      for (String groupedKey in groupedKeysForKey) {
+        groupedKeysValues[groupedKey].add(key.substring(groupedKey.length));
+      }
+
       fields += _addField(key, defaultWord,
           dependsOnContext: dependOnContext, quoteString: quoteString);
 
@@ -133,6 +145,10 @@ class FlappyTranslator {
     }
 
     template = template.replaceAll(FIELDS_AREA_TEMPLATE_KEY, fields);
+
+    template = template.replaceAll(GROUPED_KEYS_AREA_TEMPLATE_KEY,
+        _generateGroupedKeysArea(groupedKeysValues));
+
     template = template.replaceAll(
       VALUES_AREA_TEMPLATE_KEY,
       _generateStringValuesFromList(
@@ -233,6 +249,46 @@ class FlappyTranslator {
     final List<Map<String, String>> maps = [];
     supportedLanguages.forEach((supportedLanguage) => maps.add(Map()));
     return maps;
+  }
+
+  Map<String, Set<String>> _generateGroupedKeysMap(
+      Iterable<String> groupedKeys) {
+    Map<String, Set<String>> map = {};
+
+    for (String key in groupedKeys) {
+      map[key] = Set<String>();
+    }
+
+    return map;
+  }
+
+  List<String> _getGroupedKeysForKey(Iterable<String> groupedKeys, String key) {
+    List<String> relatedGroupedKeys = [];
+
+    for (String groupedKey in groupedKeys) {
+      if (key.startsWith(groupedKey)) {
+        relatedGroupedKeys.add(groupedKey);
+      }
+    }
+
+    return relatedGroupedKeys;
+  }
+
+  String _generateGroupedKeysArea(Map<String, Set<String>> groupedKeysValues) {
+    StringBuffer buffer = StringBuffer();
+
+    for (String key in groupedKeysValues.keys) {
+      buffer.writeln('String $key(String key) {\nswitch (key) {');
+
+      for (String value in groupedKeysValues[key]) {
+        buffer.writeln('case \'$value\': return _getText(\'$key$value\');');
+      }
+
+      buffer.writeln(
+          '}\nthrow Exception(\'No translation available for key $key\');\n}');
+    }
+
+    return buffer.toString();
   }
 
   String _addField(String key, String defaultWord,

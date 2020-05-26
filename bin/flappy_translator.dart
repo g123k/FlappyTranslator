@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:yaml/yaml.dart';
-
 import 'package:flappy_translator/flappy_logger.dart';
 import 'package:flappy_translator/flappy_translator.dart';
+import 'package:yaml/yaml.dart';
 
 /// The path to the pubspec file path
 const pubspecFilePath = 'pubspec.yaml';
@@ -22,6 +21,7 @@ class YamlArguments {
   static const dependOnContext = 'depend_on_context';
   static const useSingleQuotes = 'use_single_quotes';
   static const replaceNoBreakSpaces = 'replace_no_break_spaces';
+  static const groupedKeys = 'grouped_keys';
 }
 
 void main(List<String> arguments) {
@@ -65,6 +65,8 @@ void main(List<String> arguments) {
     dependOnContext: settings[YamlArguments.dependOnContext],
     useSingleQuotes: settings[YamlArguments.useSingleQuotes],
     replaceNoBreakSpaces: settings[YamlArguments.replaceNoBreakSpaces],
+    groupedKey: List<String>.from(
+        (settings[YamlArguments.groupedKeys] as YamlList)?.value),
   );
 }
 

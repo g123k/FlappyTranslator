@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 // ignore_for_file: prefer_single_quotes
 class #CLASS_NAME# {
   /// Fields area
+  
+  /// Grouped keys area
 
   static Map<String, String> _localizedValues;
 
