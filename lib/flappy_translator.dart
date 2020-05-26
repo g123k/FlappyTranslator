@@ -215,7 +215,7 @@ class FlappyTranslator {
     }
 
     result += """
-    static Map<String, Map<String, String>> _allValues = {
+    static final Map<String, Map<String, String>> _allValues = {
     """;
 
     supportedLanguages.asMap().forEach((index, lang) {
