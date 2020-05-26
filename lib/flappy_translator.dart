@@ -175,7 +175,7 @@ class FlappyTranslator {
       mapsNames.add(mapName);
 
       result += """
-      static Map<String, String> $mapName = {
+      static final Map<String, String> $mapName = {
       """;
 
       map.forEach((key, value) {
