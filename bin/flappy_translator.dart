@@ -66,7 +66,7 @@ void main(List<String> arguments) {
     useSingleQuotes: settings[YamlArguments.useSingleQuotes],
     replaceNoBreakSpaces: settings[YamlArguments.replaceNoBreakSpaces],
     groupedKey: List<String>.from(
-        (settings[YamlArguments.groupedKeys] as YamlList)?.value),
+        (settings[YamlArguments.groupedKeys] as YamlList)?.value ?? []),
   );
 }
 
