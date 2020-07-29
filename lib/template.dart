@@ -58,7 +58,7 @@ const String templateDontDependContext = """
 const String templateEnding = """
 
   static Future<#CLASS_NAME#> load(Locale locale) async {
-    final translations = #CLASS_NAME#(locale);
+    final #CLASS_NAME# translations = #CLASS_NAME#(locale);
     _localizedValues = _allValues[locale.toString()];
     return translations;
   }

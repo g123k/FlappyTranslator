@@ -191,7 +191,7 @@ class FlappyTranslator {
       mapsNames.add(mapName);
 
       result += """
-      static final Map<String, String> $mapName = {
+      static final Map<String, String> $mapName = <String, String>{
       """;
 
       map.forEach((key, value) {
@@ -215,7 +215,8 @@ class FlappyTranslator {
     }
 
     result += """
-    static final Map<String, Map<String, String>> _allValues = {
+    static final Map<String, Map<String, String>> _allValues = 
+    <String, Map<String, String>>{
     """;
 
     supportedLanguages.asMap().forEach((index, lang) {
@@ -347,7 +348,7 @@ class FlappyTranslator {
     }
 
     final String supportedLocals = """
-    static final Set<Locale> supportedLocals = { $languageLocals };
+    static final Set<Locale> supportedLocals = <Locale>{ $languageLocals };
     """
         .trim();
 
