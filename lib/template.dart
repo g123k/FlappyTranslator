@@ -22,8 +22,8 @@ const String templateDependContext = """
 
   final Locale _locale;
 
-  static #CLASS_NAME#? of(BuildContext context) {
-    return Localizations.of<#CLASS_NAME#>(context, #CLASS_NAME#);
+  static #CLASS_NAME# of(BuildContext context) {
+    return Localizations.of<#CLASS_NAME#>(context, #CLASS_NAME#)!;
   }
 
   String _getText(String key) {
