@@ -25,7 +25,7 @@ class YamlArguments {
 }
 
 void main(List<String> arguments) {
-  String inputFilePath, outputDir;
+  String? inputFilePath, outputDir;
 
   // try to load settings from the project's pubspec.yaml
   final Map<String, dynamic> settings = loadSettings();
@@ -39,10 +39,10 @@ void main(List<String> arguments) {
   }
 
   // parse command line arguments
-  if (arguments.length > 0 && arguments.first != null) {
+  if (arguments.length > 0) {
     inputFilePath = arguments.first;
   }
-  if (arguments.length > 1 && arguments[1] != null) {
+  if (arguments.length > 1) {
     outputDir = arguments[1];
   }
 
@@ -57,7 +57,7 @@ void main(List<String> arguments) {
   final flappyTranslator = FlappyTranslator();
   flappyTranslator.generate(
     inputFilePath,
-    outputDir: outputDir,
+    outputDir: outputDir!,
     fileName: settings[YamlArguments.fileName],
     className: settings[YamlArguments.className],
     delimiter: settings[YamlArguments.delimiter],
@@ -65,8 +65,10 @@ void main(List<String> arguments) {
     dependOnContext: settings[YamlArguments.dependOnContext],
     useSingleQuotes: settings[YamlArguments.useSingleQuotes],
     replaceNoBreakSpaces: settings[YamlArguments.replaceNoBreakSpaces],
-    groupedKey: List<String>.from(
-        (settings[YamlArguments.groupedKeys] as YamlList)?.value ?? []),
+    groupedKey: settings[YamlArguments.groupedKeys] != null
+        ? List<String>.from(
+            (settings[YamlArguments.groupedKeys] as YamlList).value)
+        : null,
   );
 }
 

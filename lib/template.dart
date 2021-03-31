@@ -11,21 +11,18 @@ class #CLASS_NAME# {
   
   /// Grouped keys area
 
-  static Map<String, String> _localizedValues;
+  static late Map<String, String> _localizedValues;
 
   /// Values area
 
 """;
 
 const String templateDependContext = """
-  #CLASS_NAME#(Locale locale) {
-    this._locale = locale;
-    _localizedValues = null;
-  }
+  #CLASS_NAME#(Locale locale) : this._locale = locale;
 
-  Locale _locale;
+  final Locale _locale;
 
-  static #CLASS_NAME# of(BuildContext context) {
+  static #CLASS_NAME#? of(BuildContext context) {
     return Localizations.of<#CLASS_NAME#>(context, #CLASS_NAME#);
   }
 
@@ -39,12 +36,9 @@ const String templateDependContext = """
 """;
 
 const String templateDontDependContext = """
-  #CLASS_NAME#(Locale locale) {
-    _locale = locale;
-    _localizedValues = null;
-  }
+  #CLASS_NAME#(Locale locale) : this._locale = locale;
 
-  static Locale _locale;
+  final Locale _locale;
 
   static String _getText(String key) {
     return _localizedValues[key] ?? '** \$key not found';
@@ -59,7 +53,7 @@ const String templateEnding = """
 
   static Future<#CLASS_NAME#> load(Locale locale) async {
     final #CLASS_NAME# translations = #CLASS_NAME#(locale);
-    _localizedValues = _allValues[locale.toString()];
+    _localizedValues = _allValues[locale.toString()]!;
     return translations;
   }
 }

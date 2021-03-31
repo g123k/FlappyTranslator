@@ -55,15 +55,15 @@ const List<String> RESERVED_WORDS = [
 class FlappyTranslator {
   void generate(
     String inputFilePath, {
-    String outputDir,
-    String fileName,
-    String className,
-    String delimiter,
-    int startIndex,
-    bool dependOnContext,
-    bool useSingleQuotes,
-    bool replaceNoBreakSpaces,
-    Iterable<String> groupedKey,
+    String? outputDir,
+    String? fileName,
+    String? className,
+    String? delimiter,
+    int? startIndex,
+    bool? dependOnContext,
+    bool? useSingleQuotes,
+    bool? replaceNoBreakSpaces,
+    Iterable<String>? groupedKey,
   }) async {
     final File file = File(inputFilePath);
     if (!file.existsSync()) {
@@ -131,7 +131,7 @@ class FlappyTranslator {
 
       List<String> groupedKeysForKey = _getGroupedKeysForKey(groupedKey, key);
       for (String groupedKey in groupedKeysForKey) {
-        groupedKeysValues[groupedKey].add(key.substring(groupedKey.length));
+        groupedKeysValues[groupedKey]?.add(key.substring(groupedKey.length));
       }
 
       fields += _addField(key, defaultWord,
@@ -164,7 +164,7 @@ class FlappyTranslator {
     FlappyLogger.logProgress("End of work !");
   }
 
-  void _writeInFile(String contents, String outputDir, String fileName) {
+  void _writeInFile(String contents, String? outputDir, String fileName) {
     // format the contents according to dart defaults
     contents = DartFormatter().format(contents);
 
@@ -281,7 +281,7 @@ class FlappyTranslator {
     for (String key in groupedKeysValues.keys) {
       buffer.writeln('String $key(String key) {\nswitch (key) {');
 
-      for (String value in groupedKeysValues[key]) {
+      for (String value in groupedKeysValues[key]!) {
         buffer.writeln('case \'$value\': return _getText(\'$key$value\');');
       }
 
@@ -302,7 +302,7 @@ class FlappyTranslator {
       for (RegExpMatch match in matches) {
         final String parameterType = match.group(2) == "d" ? "int" : "String";
         parameters +=
-            "@required $parameterType ${getParameterNameFromPlaceholder(match.group(0))}, ";
+            "@required $parameterType ${getParameterNameFromPlaceholder(match.group(0)!)}, ";
       }
 
       String result = (!dependsOnContext ? "static " : "") +
@@ -311,8 +311,8 @@ class FlappyTranslator {
       """;
 
       for (RegExpMatch match in matches) {
-        final String placeholderName = _formatString(match.group(1));
-        String varName = getParameterNameFromPlaceholder(match.group(0));
+        final String placeholderName = _formatString(match.group(1)!);
+        String varName = getParameterNameFromPlaceholder(match.group(0)!);
         result += """
         if ($varName != null) {
           text = text.replaceAll("$placeholderName", ${varName += match.group(2) == "d" ? ".toString()" : ""});
@@ -332,7 +332,7 @@ class FlappyTranslator {
   }
 
   String getParameterNameFromPlaceholder(String placeholder) {
-    String givenName = placeholder.substring(1, placeholder.length - 2);
+    String? givenName = placeholder.substring(1, placeholder.length - 2);
     if (int.tryParse(givenName[0]) != null) {
       givenName = "var$givenName";
     }
