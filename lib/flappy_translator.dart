@@ -302,7 +302,7 @@ class FlappyTranslator {
       for (RegExpMatch match in matches) {
         final String parameterType = match.group(2) == "d" ? "int" : "String";
         parameters +=
-            "@required $parameterType ${getParameterNameFromPlaceholder(match.group(0)!)}, ";
+            "required $parameterType ${getParameterNameFromPlaceholder(match.group(0)!)}, ";
       }
 
       String result = (!dependsOnContext ? "static " : "") +
@@ -314,9 +314,7 @@ class FlappyTranslator {
         final String placeholderName = _formatString(match.group(1)!);
         String varName = getParameterNameFromPlaceholder(match.group(0)!);
         result += """
-        if ($varName != null) {
-          text = text.replaceAll("$placeholderName", ${varName += match.group(2) == "d" ? ".toString()" : ""});
-        }
+        text = text.replaceAll("$placeholderName", ${varName += match.group(2) == "d" ? ".toString()" : ""});
         """;
       }
 
